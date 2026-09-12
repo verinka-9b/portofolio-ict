@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio Profesional & Admin Management System</title>
+
+    <script src="https://cdn.tailwindcss.com">
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .glass-nav {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+        }
+        .admin-sidebar-item.active {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: #2563eb;
+            border-right: 3px solid #2563eb;
+        }
+        .dark .admin-sidebar-item.active {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border-right: 3px solid #60a5fa;
+        }
+        .admin-lock-btn {
+            transition: all 0.2s ease;
+        }
+        .admin-lock-btn:hover {
+            transform: scale(1.05);
+        }
+        .admin-lock-btn.active {
+            background-color: rgba(37, 99, 235, 0.12);
+            color: #2563eb;
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+        .dark .admin-lock-btn.active {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .save-btn-pulse {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(37, 99, 235, 0);
+            }
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+        .section-highlight {
+            animation: sectionPulse 1s ease 2;
+        }
+        @keyframes sectionPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+            }
+            50% {
+                box-shadow: 0 0 0 8px rgba(37, 99, 235, 0.15);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen antialiased selection:bg-brand-500 selection:text-white">
+
+    <!-- ==========================================
+    PUBLIC FRONTEND VIEW
+    ========================================== -->
+    <div id="publicApp">
+        <header class="sticky top-0 z-40 w-full glass-nav bg-white/80 dark:bg-slate-900/80 border-b border-slate-200/80 dark:border-slate-800/80">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 group">
+                    <div id="brandLogoIcon" class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform">
+                        <span id="brandInitial" class="text-white">P</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-slate-900 dark:text-white leading-none text-base"><span id="brandLogoText">PortoDev</span><span class="text-brand-600">.</span></span>
+                    </div>
+                </a>
+
+                <nav class="hidden md:flex items-center space-x-1 lg:space-x-2 text-sm font-medium">
+                    <a href="#about" class="nav-link px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Tentang Saya</a>
+                    <a href="#projects" class="nav-link px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Portofolio</a>
+                    <a href="#contact" class="nav-link px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-500 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-colors">Kontak</a>
+                </nav>
+
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <a href="#contact" class="hidden sm:inline-flex items-center gap-2 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 active:bg-brand-800 rounded-xl shadow-sm hover:shadow-brand-500/25 transition-all">
+                        <span>Hubungi Saya</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </a>
+
+                    <div id="adminLockContainer"></div>
+
+                    <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 transition-colors" aria-label="Toggle Dark Mode">
+                        <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                    </button>
+
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800" aria-label="Toggle Mobile Menu">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="mobileMenu" class="hidden md:hidden border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pt-2 pb-4 space-y-2">
+                <a href="#about" onclick="toggleMobileMenu()" class="nav-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Tentang Saya</a>
+                <a href="#projects" onclick="toggleMobileMenu()" class="nav-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Portofolio Project</a>
+                <a href="#contact" onclick="toggleMobileMenu()" class="nav-link block px-3 py-2 rounded-lg text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-100 dark:hover:bg-slate-800">Hubungi Saya</a>
+            </div>
+        </header>
+
+        <main class="space-y-20 pb-20" id="publicMainContent">
+            <!-- ABOUT -->
+            <section id="about" class="pt-12 md:pt-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
+                        <div id="statusBadgeContainer" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span id="heroStatusText">Tersedia untuk Freelance & Full-time Role</span>
+                        </div>
+                        <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight" id="heroHeadline">
+                            Membangun Solusi Web <span class="bg-gradient-to-r from-brand-600 via-indigo-500 to-purple-600 bg-clip-text text-transparent">Modern, Rapi & Skalabel</span>
+                        </h1>
+                        <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed" id="heroDescription">
+                            Halo! Saya seorang Software Engineer & Web Developer. Berfokus pada arsitektur web berperforma tinggi, UI/UX bersih bergaya Figma, dan pengkodean yang mudah dirawat.
+                        </p>
+                        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+                            <a href="#projects" class="nav-link w-full sm:w-auto px-6 py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-2xl shadow-lg shadow-brand-500/25 flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5">
+                                <i class="fa-solid fa-briefcase"></i>
+                                <span>Lihat Hasil Project</span>
+                            </a>
+                        </div>
+                        <div class="pt-4 flex items-center justify-center lg:justify-start gap-4 text-slate-500 dark:text-slate-400" id="heroSocials"></div>
+                    </div>
+                    <div class="lg:col-span-5 flex justify-center">
+                        <div class="relative w-full max-w-md">
+                            <div class="absolute -top-4 -left-4 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl -z-10"></div>
+                            <div class="absolute -bottom-4 -right-4 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+                                <div class="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-6">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-rose-500 inline-block"></span>
+                                        <span class="w-3 h-3 rounded-full bg-amber-500 inline-block"></span>
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500 inline-block"></span>
+                                    </div>
+                                    <span class="text-xs font-mono text-slate-400">developer-profile.ts</span>
+                                </div>
+                                <div class="flex items-center gap-5 mb-6">
+                                    <img id="profileAvatarImg" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" alt="Developer Avatar" class="w-28 h-28 rounded-2xl object-cover ring-4 ring-brand-500/20" onerror="this.src='https://placehold.co/150x150/2563eb/ffffff?text=Dev'">
+                                    <div>
+                                        <h2 id="profileName" class="text-xl font-bold text-slate-900 dark:text-white">Alex S. Pratama</h2>
+                                        <p id="profileTitle" class="text-xs text-brand-600 dark:text-brand-400 font-semibold">Lead Full-Stack Web Developer</p>
+                                        <p id="profileLocation" class="text-xs text-slate-500 dark:text-slate-400 mt-1"><i class="fa-solid fa-location-dot mr-1"></i> Jakarta, Indonesia</p>
+                                    </div>
+                                </div>
+                                <div class="mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                                    <span><i class="fa-solid fa-check-circle text-emerald-500 mr-1"></i> Clean Code</span>
+                                    <span><i class="fa-solid fa-bolt text-amber-500 mr-1"></i> Optimized Speed</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROJECTS -->
+            <section id="projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400">Portofolio Pilihan</span>
+                        <h2 class="text-2xl sm:text-4xl font-bold text-slate-900 dark:text-white mt-1">Project Terbaru Saya</h2>
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 max-w-md">
+                        Kumpulan aplikasi web, platform SaaS, dan eksperimen UI/UX yang telah saya bangun dengan fokus pada fungsionalitas & keindahan.
+                    </p>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm mb-8 flex items-center justify-end gap-4">
+                    <div class="relative w-full md:w-64">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="projectSearchInput" onkeyup="searchProjects()" placeholder="Cari project..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+                    </div>
+                </div>
+                <div id="projectsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"></div>
+                <div id="noProjectsMessage" class="hidden text-center py-16 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                    <i class="fa-solid fa-folder-open text-4xl text-slate-300 dark:text-slate-600 mb-3"></i>
+                    <h3 class="text-lg font-bold text-slate-700 dark:text-slate-300">Project tidak ditemukan</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Coba gunakan kata kunci lain.</p>
+                </div>
+            </section>
+
+            <!-- CONTACT -->
+            <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 scroll-mt-20">
+                <div class="bg-gradient-to-br from-brand-900 via-slate-900 to-indigo-950 rounded-3xl p-6 sm:p-10 lg:p-12 text-white shadow-2xl relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                        <div class="lg:col-span-5 space-y-6">
+                            <span class="px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/30 rounded-full text-xs font-semibold">Mari Berkolaborasi</span>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold leading-tight">Tertarik Memulai Project Bersama?</h2>
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Apakah Anda memiliki ide produk baru, ingin merombak situs web lama, atau membutuhkan pengembang penuh waktu? Saya siap membantu!
+                            </p>
+                            <div class="space-y-4 pt-4">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-brand-400">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-slate-400 font-medium">Email Langsung</div>
+                                        <a id="contactEmail" href="mailto:alex.pratama@dev.com" class="text-sm font-semibold hover:text-brand-300 transition-colors">alex.pratama@dev.com</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-emerald-400">
+                                        <i class="fa-brands fa-whatsapp"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-slate-400 font-medium">WhatsApp / Telepon</div>
+                                        <a id="contactPhone" href="https://wa.me/6281234567890" target="_blank" class="text-sm font-semibold hover:text-emerald-300 transition-colors">+62 812-3456-7890</a>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-purple-400">
+                                        <i class="fa-solid fa-location-dot"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-slate-400 font-medium">Lokasi Kerja</div>
+                                        <span id="contactLocation" class="text-sm font-semibold">Jakarta South, Indonesia (WFA / Remote)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-7 bg-white dark:bg-slate-900 text-slate-900 dark:text-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-200/20">
+                            <form id="contactForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Nama Lengkap *</label>
+                                        <input type="text" id="formName" required placeholder="John Doe" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Alamat Email *</label>
+                                        <input type="email" id="formEmail" required placeholder="john@company.com" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Subjek Project</label>
+                                    <input type="text" id="formSubject" placeholder="Pengembangan Aplikasi Web E-commerce" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Pesan / Detail Project *</label>
+                                    <textarea id="formMessage" rows="4" required placeholder="Ceritakan ide project Anda..." class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                                </div>
+                                <button type="submit" id="submitBtn" class="w-full py-3 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                                    <span>Kirim Pesan Sekarang</span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="bg-white dark:bg-slate-900 border-t border-slate-200/80 dark:border-slate-800 py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="text-xs text-slate-500 dark:text-slate-400 text-center sm:text-left" id="footerCopyright">
+                    © 2026 <span id="footerBrandName">Alex S. Pratama</span>. Managed via Integrated Admin Backend.
+                </div>
+                <div class="flex items-center gap-6 text-xs text-slate-500 dark:text-slate-400">
+                    <a href="#about" class="nav-link hover:text-brand-600 dark:hover:text-brand-400">Atas</a>
+                    <a href="#projects" class="nav-link hover:text-brand-600 dark:hover:text-brand-400">Project</a>
+                    <a href="#contact" class="nav-link hover:text-brand-600 dark:hover:text-brand-400">Kontak</a>
+                    <button id="footerAdminBtn" onclick="handleFooterAdminClick()" class="hover:text-brand-600 dark:hover:text-brand-400 font-semibold">Login Admin</button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==========================================
+    ADMIN LOGIN MODAL
+    ========================================== -->
+    <div id="loginModal" class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeLoginModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-2 rounded-xl">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-brand-600/10 text-brand-600 rounded-2xl flex items-center justify-center text-xl font-bold mx-auto mb-3">
+                    <i class="fa-solid fa-user-shield"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white">Admin Authentication</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Masukan akun admin Anda untuk mengelola konten web</p>
+            </div>
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Username Admin</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="loginUsername" required placeholder="Username admin..." class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1.5">Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="password" id="loginPassword" required placeholder="••••••••" class="w-full pl-10 pr-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div id="loginErrorMsg" class="hidden text-xs text-rose-500 bg-rose-50 dark:bg-rose-950/40 p-3 rounded-xl border border-rose-200 dark:border-rose-900 text-center">
+                    Username atau password salah!
+                </div>
+                <button type="submit" class="w-full py-3 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold rounded-xl transition-all shadow-md shadow-brand-500/20 text-sm">
+                    Masuk ke Admin Panel
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    ADMIN PANEL
+    ========================================== -->
+    <div id="adminPanel" class="hidden fixed inset-0 z-50 bg-slate-100 dark:bg-slate-950 flex flex-col lg:flex-row overflow-hidden">
+
+        <!-- Admin Sidebar -->
+        <aside class="w-full lg:w-64 bg-white dark:bg-slate-900 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0">
+            <div>
+                <div class="p-4 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-md">
+                            <i class="fa-solid fa-sliders text-sm"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-slate-900 dark:text-white leading-none text-sm block">Admin Console</span>
+                            <span class="text-[10px] text-emerald-500 font-medium">● System Authenticated</span>
+                        </div>
+                    </div>
+                </div>
+                <nav class="p-3 space-y-1 overflow-x-auto lg:overflow-x-visible flex lg:flex-col gap-1 lg:gap-0">
+                    <button onclick="switchAdminTab('dashboard')" id="nav-dashboard" class="admin-sidebar-item active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-chart-pie text-sm"></i> Dashboard
+                    </button>
+                    <button onclick="switchAdminTab('hero')" id="nav-hero" class="admin-sidebar-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-id-card text-sm"></i> Hero & Profile
+                    </button>
+                    <button onclick="switchAdminTab('projects')" id="nav-projects" class="admin-sidebar-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-folder-open text-sm"></i> Kelola Project
+                    </button>
+                    <button onclick="switchAdminTab('contact')" id="nav-contact" class="admin-sidebar-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-address-book text-sm"></i> Kelola Kontak
+                    </button>
+                    <button onclick="switchAdminTab('security')" id="nav-security" class="admin-sidebar-item w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all whitespace-nowrap">
+                        <i class="fa-solid fa-shield-halved text-sm"></i> Keamanan
+                    </button>
+                </nav>
+            </div>
+            <div class="p-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+                <button onclick="closeAdminPanel()" class="w-full py-2 px-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-eye text-xs"></i> Lihat Website Live
+                </button>
+                <button onclick="adminLogout()" class="w-full py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-right-from-bracket text-xs"></i> Keluar
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-8">
+            <div class="max-w-5xl mx-auto space-y-6">
+
+                <!-- DASHBOARD -->
+                <div id="tab-dashboard" class="admin-tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-sm">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">Selamat Datang di Admin Panel</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Atur dan perbarui semua informasi portofolio Anda secara terpusat.</p>
+                        </div>
+                        <span class="px-3 py-1 bg-brand-500/10 text-brand-600 dark:text-brand-400 rounded-full text-xs font-semibold w-fit">Status: Active Backend</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+                            <div class="text-xs font-semibold text-slate-400 uppercase">Total Project</div>
+                            <div class="text-3xl font-extrabold text-brand-600 dark:text-brand-400 mt-1" id="dashTotalProjects">0</div>
+                        </div>
+                    </div>
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-4">
+                        <h3 class="text-base font-bold text-slate-900 dark:text-white">Aksi Cepat</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <button onclick="switchAdminTab('projects')" class="p-4 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-2xl text-left border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-between">
+                                <div><div class="text-xs font-bold text-slate-900 dark:text-white">Tambah Project</div><div class="text-[11px] text-slate-500">Card portofolio baru</div></div>
+                                <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            </button>
+                            <button onclick="switchAdminTab('contact')" class="p-4 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700/60 rounded-2xl text-left border border-slate-200 dark:border-slate-700 transition-all flex items-center justify-between">
+                                <div><div class="text-xs font-bold text-slate-900 dark:text-white">Edit Kontak</div><div class="text-[11px] text-slate-500">Email, HP & lokasi</div></div>
+                                <i class="fa-solid fa-arrow-right text-slate-400"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HERO -->
+                <div id="tab-hero" class="admin-tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">Pengaturan Profil & Hero</h3>
+                        <form onsubmit="saveHeroSection(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Lengkap</label><input type="text" id="editProfileName" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Jabatan</label><input type="text" id="editProfileTitle" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Status Ketersediaan</label><input type="text" id="editProfileStatus" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lokasi</label><input type="text" id="editProfileLocation" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            </div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Headline Utama</label><input type="text" id="editHeroHeadline" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Deskripsi Bio</label><textarea id="editHeroDescription" rows="3" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></textarea></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">URL Avatar</label><input type="url" id="editProfileAvatar" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nama Brand (Navbar & Footer)</label><input type="text" id="editBrandName" required placeholder="PortoDev" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-brand-500/20 flex items-center justify-center gap-2 save-btn-pulse">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Profil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PROJECTS -->
+                <div id="tab-projects" class="admin-tab-content hidden space-y-6">
+                    <div class="flex items-center justify-between bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800">
+                        <div><h3 class="text-lg font-bold text-slate-900 dark:text-white">Kelola Project</h3><p class="text-xs text-slate-500">Tambah, edit, atau hapus project</p></div>
+                        <button onclick="openProjectFormModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-plus"></i> Tambah</button>
+                    </div>
+                    <div id="adminProjectsList" class="space-y-4"></div>
+                    <button onclick="saveAllProjects()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 save-btn-pulse">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Semua Perubahan Project
+                    </button>
+                </div>
+
+                <!-- CONTACT -->
+                <div id="tab-contact" class="admin-tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">Kelola Informasi Kontak</h3>
+                        <form onsubmit="saveContactSection(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Alamat Email</label>
+                                <input type="email" id="editContactEmail" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Nomor WhatsApp / Telepon</label>
+                                <input type="text" id="editContactPhone" required placeholder="+62 812-3456-7890" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Lokasi Kerja</label>
+                                <input type="text" id="editContactLocation" required placeholder="Jakarta, Indonesia" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-brand-500/20 flex items-center justify-center gap-2 save-btn-pulse">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Perubahan Kontak
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- SECURITY -->
+                <div id="tab-security" class="admin-tab-content hidden space-y-6">
+                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800 space-y-6">
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3">Ubah Kredensial Login</h3>
+                        <form onsubmit="saveSecurityCredentials(event)" class="space-y-4 max-w-md">
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Username Baru</label><input type="text" id="editAdminUsername" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Password Baru</label><input type="password" id="editAdminPassword" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Konfirmasi Password</label><input type="password" id="editAdminPasswordConfirm" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                            <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 save-btn-pulse">
+                                <i class="fa-solid fa-floppy-disk"></i> Simpan Kredensial
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==========================================
+    PROJECT FORM MODAL
+    ========================================== -->
+    <div id="projectFormModal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl relative">
+            <button onclick="closeProjectFormModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 p-2 rounded-xl"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <h3 id="projectFormTitle" class="text-xl font-bold text-slate-900 dark:text-white mb-6">Tambah Project Baru</h3>
+            <form onsubmit="handleProjectSave(event)" class="space-y-4">
+                <input type="hidden" id="projectEditId">
+                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Judul Project *</label><input type="text" id="projTitle" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">URL Cover Gambar *</label><input type="url" id="projImage" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Deskripsi Singkat *</label><input type="text" id="projShortDesc" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Deskripsi Lengkap *</label><textarea id="projFullDesc" rows="3" required class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></textarea></div>
+                <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Tech Stack (pisah koma)</label><input type="text" id="projTechStack" placeholder="React.js, Tailwind CSS, Node.js" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">URL Live Demo</label><input type="url" id="projDemoUrl" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                    <div><label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">URL Repository</label><input type="url" id="projRepoUrl" class="w-full px-4 py-2.5 text-sm bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"></div>
+                </div>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" onclick="closeProjectFormModal()" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-600 rounded-xl text-xs font-semibold">Batal</button>
+                    <button type="submit" class="px-6 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> Simpan Project
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    PROJECT DETAIL MODAL (PUBLIC)
+    ========================================== -->
+    <div id="projectModal" class="fixed inset-0 z-50 hidden overflow-y-auto bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-900 dark:hover:text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div id="modalContent" class="p-6 sm:p-8 space-y-6"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+    TOAST
+    ========================================== -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div id="toastContent" class="bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 text-sm font-medium">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600 text-lg"></i>
+            <span id="toastText">Pesan berhasil!</span>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================
+           APP STATE
+           ========================================== */
+        let appState = {
+            auth: { username: "admin", password: "admin1234" },
+            isAdminLoggedIn: false,
+            profile: {
+                brandName: "PortoDev",
+                name: "Alex S. Pratama",
+                title: "Lead Full-Stack Web Developer",
+                status: "Tersedia untuk Freelance & Full-time Role",
+                location: "Jakarta, Indonesia",
+                headline: "Membangun Solusi Web Modern, Rapi & Skalabel",
+                description: "Halo! Saya seorang Software Engineer & Web Developer. Berfokus pada arsitektur web berperforma tinggi, UI/UX bersih bergaya Figma, dan pengkodean yang mudah dirawat.",
+                avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80",
+                email: "alex.pratama@dev.com",
+                phone: "+62 812-3456-7890",
+                contactLocation: "Jakarta South, Indonesia (WFA / Remote)"
+            },
+            projects: [{
+                id: 1,
+                title: "SaaS Dashboard Management Platform",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80",
+                shortDesc: "Platform manajemen analytics SaaS terintegrasi dengan visualisasi chart data real-time.",
+                fullDesc: "Aplikasi dashboard SaaS berbasis cloud yang dirancang untuk membantu startup memantau metrik penjualan, konversi pengguna, dan statistik performa sistem secara live. Dilengkapi fitur ekspor laporan PDF dan analitik AI.",
+                techStack: ["React.js", "TypeScript", "Tailwind CSS", "Chart.js", "Node.js"],
+                demoUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            }, {
+                id: 2,
+                title: "Fintech E-Wallet Mobile UI",
+                image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80",
+                shortDesc: "Aplikasi keuangan digital responsif untuk transfer dana kilat dan bayar tagihan.",
+                fullDesc: "Desain dan implementasi frontend mobile e-wallet serbaguna dengan pengalaman UX minim gesekan. Memungkinkan pembayaran QRIS cepat, manajemen budget bulanan, serta pengamanan autentikasi biometrik.",
+                techStack: ["React Native", "Tailwind CSS", "Redux Toolkit", "Firebase"],
+                demoUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            }, {
+                id: 3,
+                title: "E-Commerce Luxury Store & CMS",
+                image: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&auto=format&fit=crop&q=80",
+                shortDesc: "Toko online produk eksklusif dilengkapi payment gateway dan headless CMS.",
+                fullDesc: "Toko online modern yang fokus pada kecepatan tinggi dan desain minimalis ala brand kemewahan. Terintegrasi dengan Midtrans Payment Gateway, pencarian Algolia, dan Stripe.",
+                techStack: ["Next.js", "PostgreSQL", "Prisma", "Tailwind CSS", "Stripe"],
+                demoUrl: "https://example.com",
+                repoUrl: "https://github.com"
+            }]
+        };
+
+        let searchQuery = '';
+
+        /* ==========================================
+           SMOOTH SCROLL NAVIGATION
+           ========================================== */
+        function setupSmoothScroll() {
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('a[href^="#"]');
+                if (!link) return;
+                const targetId = link.getAttribute('href');
+                if (targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if (!targetElement) return;
+                e.preventDefault();
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (history.pushState) { history.pushState(null, '', targetId); }
+                targetElement.classList.remove('section-highlight');
+                void targetElement.offsetWidth;
+                targetElement.classList.add('section-highlight');
+                setTimeout(() => { targetElement.classList.remove('section-highlight'); }, 2000);
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (!mobileMenu.classList.contains('hidden')) { mobileMenu.classList.add('hidden'); }
+            });
+        }
+
+        /* ==========================================
+           RENDER PUBLIC FRONTEND
+           ========================================== */
+        function renderPublicFrontend() {
+            // Brand name - Navbar
+            document.getElementById('brandLogoText').textContent = appState.profile.brandName;
+            document.getElementById('brandInitial').textContent = appState.profile.brandName.charAt(0).toUpperCase();
+
+            // Brand name - Footer
+            document.getElementById('footerBrandName').textContent = appState.profile.brandName;
+
+            // Profile
+            document.getElementById('profileName').textContent = appState.profile.name;
+            document.getElementById('profileTitle').textContent = appState.profile.title;
+            document.getElementById('heroStatusText').textContent = appState.profile.status;
+            document.getElementById('profileLocation').innerHTML =
+                `<i class="fa-solid fa-location-dot mr-1"></i> ${appState.profile.location}`;
+            document.getElementById('heroHeadline').innerHTML = appState.profile.headline;
+            document.getElementById('heroDescription').textContent = appState.profile.description;
+            document.getElementById('profileAvatarImg').src = appState.profile.avatar;
+
+            // Contact Info
+            document.getElementById('contactEmail').textContent = appState.profile.email;
+            document.getElementById('contactEmail').href = `mailto:${appState.profile.email}`;
+            document.getElementById('contactPhone').textContent = appState.profile.phone;
+            document.getElementById('contactPhone').href = `https://wa.me/${appState.profile.phone.replace(/[^0-9]/g, '')}`;
+            document.getElementById('contactLocation').textContent = appState.profile.contactLocation;
+
+            renderProjects();
+            renderAdminLockButton();
+            updateFooterAdminButton();
+        }
+
+        /* ==========================================
+           ADMIN LOCK BUTTON
+           ========================================== */
+        function renderAdminLockButton() {
+            const container = document.getElementById('adminLockContainer');
+            if (appState.isAdminLoggedIn) {
+                container.innerHTML = `
+                    <button onclick="openAdminPanelDirect()" class="admin-lock-btn active p-2 rounded-xl border border-brand-500/30 bg-brand-500/10 text-brand-600 dark:text-brand-400 hover:bg-brand-500/20 transition-all" title="Buka Admin Panel">
+                        <i class="fa-solid fa-lock-open text-base"></i>
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openLoginModal()" class="admin-lock-btn p-2 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 transition-all" title="Login Admin">
+                        <i class="fa-solid fa-lock text-base"></i>
+                    </button>
+                `;
+            }
+        }
+
+        function updateFooterAdminButton() {
+            const btn = document.getElementById('footerAdminBtn');
+            if (btn) {
+                if (appState.isAdminLoggedIn) {
+                    btn.textContent = 'Admin Panel';
+                    btn.className = 'hover:text-brand-600 dark:hover:text-brand-400 font-semibold text-emerald-600 dark:text-emerald-400';
+                } else {
+                    btn.textContent = 'Login Admin';
+                    btn.className = 'hover:text-brand-600 dark:hover:text-brand-400 font-semibold';
+                }
+            }
+        }
+
+        function handleFooterAdminClick() {
+            if (appState.isAdminLoggedIn) {
+                openAdminPanelDirect();
+            } else {
+                openLoginModal();
+            }
+        }
+
+        function openAdminPanelDirect() {
+            if (appState.isAdminLoggedIn) {
+                showAdminPanel();
+            } else {
+                openLoginModal();
+            }
+        }
+
+        /* ==========================================
+           LOGIN
+           ========================================== */
+        function clearLoginFields() {
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginErrorMsg').classList.add('hidden');
+        }
+
+        function openLoginModal() {
+            clearLoginFields();
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            clearLoginFields();
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const user = document.getElementById('loginUsername').value;
+            const pass = document.getElementById('loginPassword').value;
+            if (user === appState.auth.username && pass === appState.auth.password) {
+                appState.isAdminLoggedIn = true;
+                closeLoginModal();
+                showAdminPanel();
+                renderAdminLockButton();
+                updateFooterAdminButton();
+                showToast("Berhasil login sebagai Admin!");
+            } else {
+                document.getElementById('loginErrorMsg').classList.remove('hidden');
+            }
+        }
+
+        function showAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('hidden');
+            renderAdminDashboard();
+            renderAdminLockButton();
+            updateFooterAdminButton();
+            populateContactForm();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanel').classList.add('hidden');
+            renderAdminLockButton();
+            updateFooterAdminButton();
+        }
+
+        function adminLogout() {
+            appState.isAdminLoggedIn = false;
+            closeAdminPanel();
+            clearLoginFields();
+            renderAdminLockButton();
+            updateFooterAdminButton();
+            showToast("Anda telah keluar dari Admin Panel.");
+        }
+
+        function switchAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.admin-sidebar-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.getElementById(`nav-${tabName}`).classList.add('active');
+            if (tabName === 'dashboard') renderAdminDashboard();
+            if (tabName === 'hero') populateHeroForm();
+            if (tabName === 'projects') renderAdminProjectsList();
+            if (tabName === 'contact') populateContactForm();
+            if (tabName === 'security') populateSecurityForm();
+        }
+
+        /* ==========================================
+           DASHBOARD
+           ========================================== */
+        function renderAdminDashboard() {
+            document.getElementById('dashTotalProjects').textContent = appState.projects.length;
+        }
+
+        /* ==========================================
+           HERO
+           ========================================== */
+        function populateHeroForm() {
+            document.getElementById('editProfileName').value = appState.profile.name;
+            document.getElementById('editProfileTitle').value = appState.profile.title;
+            document.getElementById('editProfileStatus').value = appState.profile.status;
+            document.getElementById('editProfileLocation').value = appState.profile.location;
+            document.getElementById('editHeroHeadline').value = appState.profile.headline;
+            document.getElementById('editHeroDescription').value = appState.profile.description;
+            document.getElementById('editProfileAvatar').value = appState.profile.avatar;
+            document.getElementById('editBrandName').value = appState.profile.brandName;
+        }
+
+        function saveHeroSection(e) {
+            e.preventDefault();
+            appState.profile.name = document.getElementById('editProfileName').value;
+            appState.profile.title = document.getElementById('editProfileTitle').value;
+            appState.profile.status = document.getElementById('editProfileStatus').value;
+            appState.profile.location = document.getElementById('editProfileLocation').value;
+            appState.profile.headline = document.getElementById('editHeroHeadline').value;
+            appState.profile.description = document.getElementById('editHeroDescription').value;
+            appState.profile.avatar = document.getElementById('editProfileAvatar').value;
+            appState.profile.brandName = document.getElementById('editBrandName').value || "PortoDev";
+            renderPublicFrontend();
+            showToast("Profil berhasil disimpan!");
+        }
+
+        /* ==========================================
+           CONTACT
+           ========================================== */
+        function populateContactForm() {
+            document.getElementById('editContactEmail').value = appState.profile.email;
+            document.getElementById('editContactPhone').value = appState.profile.phone;
+            document.getElementById('editContactLocation').value = appState.profile.contactLocation;
+        }
+
+        function saveContactSection(e) {
+            e.preventDefault();
+            appState.profile.email = document.getElementById('editContactEmail').value;
+            appState.profile.phone = document.getElementById('editContactPhone').value;
+            appState.profile.contactLocation = document.getElementById('editContactLocation').value;
+            renderPublicFrontend();
+            showToast("Informasi kontak berhasil disimpan!");
+        }
+
+        /* ==========================================
+           PROJECTS CRUD
+           ========================================== */
+        function renderAdminProjectsList() {
+            const list = document.getElementById('adminProjectsList');
+            list.innerHTML = appState.projects.map(proj =>
+                `<div class="bg-white dark:bg-slate-900 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <img src="${proj.image}" class="w-16 h-12 rounded-xl object-cover" onerror="this.src='https://placehold.co/100x100/2563eb/ffffff?text=Proj'">
+                        <div><h4 class="text-sm font-bold text-slate-900 dark:text-white">${proj.title}</h4></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="editProject(${proj.id})" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-medium">Edit</button>
+                        <button onclick="deleteProject(${proj.id})" class="px-3 py-1.5 bg-rose-500/10 text-rose-600 rounded-xl text-xs font-medium">Hapus</button>
+                    </div>
+                </div>`
+            ).join('');
+        }
+
+        function openProjectFormModal(id = null) {
+            document.getElementById('projectFormModal').classList.remove('hidden');
+            if (id) {
+                const proj = appState.projects.find(p => p.id === id);
+                document.getElementById('projectFormTitle').textContent = "Edit Project";
+                document.getElementById('projectEditId').value = proj.id;
+                document.getElementById('projTitle').value = proj.title;
+                document.getElementById('projImage').value = proj.image;
+                document.getElementById('projShortDesc').value = proj.shortDesc;
+                document.getElementById('projFullDesc').value = proj.fullDesc;
+                document.getElementById('projTechStack').value = proj.techStack.join(', ');
+                document.getElementById('projDemoUrl').value = proj.demoUrl;
+                document.getElementById('projRepoUrl').value = proj.repoUrl;
+            } else {
+                document.getElementById('projectFormTitle').textContent = "Tambah Project Baru";
+                document.getElementById('projectEditId').value = "";
+                document.getElementById('projTitle').value = "";
+                document.getElementById('projImage').value = "";
+                document.getElementById('projShortDesc').value = "";
+                document.getElementById('projFullDesc').value = "";
+                document.getElementById('projTechStack').value = "";
+                document.getElementById('projDemoUrl').value = "https://example.com";
+                document.getElementById('projRepoUrl').value = "https://github.com";
+            }
+        }
+
+        function closeProjectFormModal() { document.getElementById('projectFormModal').classList.add('hidden'); }
+
+        function editProject(id) { openProjectFormModal(id); }
+
+        function deleteProject(id) {
+            if (!confirm("Yakin ingin menghapus project ini?")) return;
+            appState.projects = appState.projects.filter(p => p.id !== id);
+            renderAdminProjectsList();
+            renderPublicFrontend();
+            showToast("Project berhasil dihapus!");
+        }
+
+        function handleProjectSave(e) {
+            e.preventDefault();
+            const editId = document.getElementById('projectEditId').value;
+            const newProj = {
+                id: editId ? parseInt(editId) : Date.now(),
+                title: document.getElementById('projTitle').value,
+                image: document.getElementById('projImage').value,
+                shortDesc: document.getElementById('projShortDesc').value,
+                fullDesc: document.getElementById('projFullDesc').value,
+                techStack: document.getElementById('projTechStack').value.split(',').map(s => s.trim()).filter(Boolean),
+                demoUrl: document.getElementById('projDemoUrl').value,
+                repoUrl: document.getElementById('projRepoUrl').value
+            };
+            if (editId) {
+                const idx = appState.projects.findIndex(p => p.id === parseInt(editId));
+                if (idx !== -1) appState.projects[idx] = newProj;
+            } else {
+                appState.projects.unshift(newProj);
+            }
+            closeProjectFormModal();
+            renderAdminProjectsList();
+            renderPublicFrontend();
+            showToast("Project berhasil disimpan!");
+        }
+
+        function saveAllProjects() {
+            renderPublicFrontend();
+            showToast("Semua perubahan project berhasil disimpan!");
+        }
+
+        /* ==========================================
+           SECURITY
+           ========================================== */
+        function populateSecurityForm() {
+            document.getElementById('editAdminUsername').value = appState.auth.username;
+            document.getElementById('editAdminPassword').value = "";
+            document.getElementById('editAdminPasswordConfirm').value = "";
+        }
+
+        function saveSecurityCredentials(e) {
+            e.preventDefault();
+            const u = document.getElementById('editAdminUsername').value;
+            const p1 = document.getElementById('editAdminPassword').value;
+            const p2 = document.getElementById('editAdminPasswordConfirm').value;
+            if (p1 !== p2) { showToast("Password tidak cocok!", true); return; }
+            appState.auth.username = u;
+            if (p1) appState.auth.password = p1;
+            showToast("Kredensial diperbarui!");
+            populateSecurityForm();
+        }
+
+        /* ==========================================
+           PUBLIC MODAL (Project Detail)
+           ========================================== */
+        function openModal(id) {
+            const project = appState.projects.find(p => p.id === id);
+            if (!project) return;
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="space-y-4">
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white">${project.title}</h2>
+                </div>
+                <div class="rounded-2xl overflow-hidden aspect-video bg-slate-100 dark:bg-slate-800">
+                    <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover">
+                </div>
+                <div class="space-y-3">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400">Deskripsi Lengkap</h4>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">${project.fullDesc}</p>
+                </div>
+                <div class="pt-4 flex flex-col sm:flex-row items-center gap-3 border-t border-slate-100 dark:border-slate-800">
+                    <a href="${project.demoUrl}" target="_blank" class="w-full sm:w-auto px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-semibold rounded-xl text-xs text-center flex items-center justify-center gap-2"><i class="fa-solid fa-arrow-up-right-from-square"></i> Live Demo</a>
+                    <a href="${project.repoUrl}" target="_blank" class="w-full sm:w-auto px-5 py-2.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-200 font-semibold rounded-xl text-xs text-center flex items-center justify-center gap-2"><i class="fa-brands fa-github"></i> Repository</a>
+                </div>
+            `;
+            document.getElementById('projectModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('projectModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        /* ==========================================
+           PROJECTS RENDER
+           ========================================== */
+        function renderProjects() {
+            const grid = document.getElementById('projectsGrid');
+            const noMsg = document.getElementById('noProjectsMessage');
+            grid.innerHTML = '';
+
+            const filtered = appState.projects.filter(proj => {
+                const matchSearch = proj.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    proj.shortDesc.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    (proj.techStack && proj.techStack.some(t => t.toLowerCase().includes(searchQuery.toLowerCase())));
+                return matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                noMsg.classList.remove('hidden');
+            } else {
+                noMsg.classList.add('hidden');
+                filtered.forEach(proj => {
+                    const card = document.createElement('div');
+                    card.className =
+                        "bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm card-hover flex flex-col justify-between";
+                    card.innerHTML = `
+                        <div>
+                            <div class="relative overflow-hidden group aspect-video bg-slate-100 dark:bg-slate-800">
+                                <img src="${proj.image}" alt="${proj.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" onerror="this.src='https://placehold.co/600x400/2563eb/ffffff?text=Project+Preview'">
+                            </div>
+                            <div class="p-5 sm:p-6">
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white line-clamp-1 hover:text-brand-600 transition-colors cursor-pointer" onclick="openModal(${proj.id})">${proj.title}</h3>
+                                <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-2 line-clamp-2 leading-relaxed">${proj.shortDesc}</p>
+                            </div>
+                        </div>
+                        <div class="px-5 sm:px-6 pb-6 pt-2 flex items-center justify-between border-t border-slate-100 dark:border-slate-800/80 mt-2">
+                            <button onclick="openModal(${proj.id})" class="text-xs font-semibold text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1">Detail Project <i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                            <div class="flex items-center gap-2">
+                                <a href="${proj.repoUrl}" target="_blank" class="p-2 rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"><i class="fa-brands fa-github text-base"></i></a>
+                                <a href="${proj.demoUrl}" target="_blank" class="p-2 rounded-lg text-slate-400 hover:text-brand-600 transition-colors"><i class="fa-solid fa-arrow-up-right-from-square text-sm"></i></a>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        function searchProjects() {
+            searchQuery = document.getElementById('projectSearchInput').value;
+            renderProjects();
+        }
+
+        /* ==========================================
+           THEME
+           ========================================== */
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia(
+                    '(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-lg';
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeIcon').className = 'fa-solid fa-moon text-lg';
+            }
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+                document.getElementById('themeIcon').className = 'fa-solid fa-moon text-lg';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-lg';
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('hidden');
+        }
+
+        /* ==========================================
+           TOAST
+           ========================================== */
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const text = document.getElementById('toastText');
+            const icon = document.getElementById('toastIcon');
+            text.textContent = message;
+            icon.className = isError ?
+                'fa-solid fa-circle-xmark text-rose-500 text-lg' :
+                'fa-solid fa-circle-check text-emerald-400 dark:text-emerald-600 text-lg';
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            clearTimeout(toast._timer);
+            toast._timer = setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        /* ==========================================
+           CONTACT FORM
+           ========================================== */
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-sm"></i> <span>Mengirim...</span>`;
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+                document.getElementById('contactForm').reset();
+                showToast("Terima kasih! Pesan terkirim.");
+            }, 1200);
+        }
+
+        /* ==========================================
+           INIT
+           ========================================== */
+        window.onload = function() {
+            initTheme();
+            renderPublicFrontend();
+            setupSmoothScroll();
+            renderAdminLockButton();
+            updateFooterAdminButton();
+
+            if (window.location.hash) {
+                const target = document.querySelector(window.location.hash);
+                if (target) {
+                    setTimeout(() => {
+                        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        target.classList.add('section-highlight');
+                        setTimeout(() => target.classList.remove('section-highlight'), 2000);
+                    }, 300);
+                }
+            }
+        };
+    </script>
+</body>
+</html>
