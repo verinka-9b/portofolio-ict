@@ -35,6 +35,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <script type="importmap">
+    {
+      "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"
+      }
+    }
+    </script>
+    <script>
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -722,7 +736,34 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "firebase/app";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+        import {
+            getFirestore,
+            doc,
+            getDoc,
+            setDoc,
+            onSnapshot
+        } from "firebase/firestore";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyBlUuxIyl7xCIuaWsfq5jzOkALoVC2Xjm4",
+          authDomain: "myportofolio-1c530.firebaseapp.com",
+          projectId: "myportofolio-1c530",
+          storageBucket: "myportofolio-1c530.firebasestorage.app",
+          messagingSenderId: "607207458270",
+          appId: "1:607207458270:web:9a6937104938b62123494f"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const PORTFOLIO_DOC_REF = doc(db, "portfolio", "data");
+
         /* ==========================================
            APP STATE
            ========================================== */
@@ -776,11 +817,66 @@
                 liveDemoLabel: "Live Demo",
                 repoLabel: "Repository"
             }],
-            messages: []
+            messages: [{
+                id: 1,
+                name: "John Doe",
+                email: "john@example.com",
+                subject: "Konsultasi Project",
+                message: "Halo, saya tertarik untuk berdiskusi tentang pengembangan aplikasi web untuk startup saya. Bisa kita jadwalkan meeting?",
+                date: new Date().toISOString(),
+                read: false
+            }],
+            theme: "light"
         };
 
         let searchQuery = '';
-        let messageIdCounter = 1;
+        let messageIdCounter = 2;
+
+        /* ==========================================
+           FIRESTORE SYNC & PERSISTENCE
+           ========================================== */
+        async function saveStateToFirestore() {
+            try {
+                await setDoc(PORTFOLIO_DOC_REF, {
+                    profile: appState.profile,
+                    projects: appState.projects,
+                    auth: appState.auth,
+                    messages: appState.messages,
+                    theme: appState.theme
+                }, { merge: true });
+            } catch (err) {
+                console.error("Gagal menyimpan ke Firestore:", err);
+                showToast("Peringatan: Gagal menyimpan data ke Firestore (" + (err.message || err) + ")", true);
+            }
+        }
+
+        // Listener Firestore untuk sinkronisasi data secara Realtime
+        onSnapshot(PORTFOLIO_DOC_REF, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.profile) appState.profile = { ...appState.profile, ...data.profile };
+                if (data.projects && Array.isArray(data.projects)) appState.projects = data.projects;
+                if (data.auth) appState.auth = { ...appState.auth, ...data.auth };
+                if (data.messages && Array.isArray(data.messages)) appState.messages = data.messages;
+                if (data.theme) {
+                    appState.theme = data.theme;
+                    applyTheme(data.theme);
+                }
+
+                renderPublicFrontend();
+                if (appState.isAdminLoggedIn) {
+                    renderAdminDashboard();
+                    renderAdminProjectsList();
+                    renderMessages();
+                    updateUnreadBadge();
+                }
+            } else {
+                // Inisialisasi awal ke Firestore jika dokumen belum ada
+                saveStateToFirestore();
+            }
+        }, (err) => {
+            console.warn("Firestore onSnapshot error:", err);
+        });
 
         /* ==========================================
            ADMIN SIDEBAR TOGGLE (Mobile)
@@ -1045,7 +1141,7 @@
             document.getElementById('editBrandName').value = appState.profile.brandName;
         }
 
-        function saveHeroSection(e) {
+        async function saveHeroSection(e) {
             e.preventDefault();
             appState.profile.name = document.getElementById('editProfileName').value;
             appState.profile.title = document.getElementById('editProfileTitle').value;
@@ -1056,6 +1152,7 @@
             appState.profile.avatar = document.getElementById('editProfileAvatar').value;
             appState.profile.brandName = document.getElementById('editBrandName').value || "PortoDev";
             renderPublicFrontend();
+            await saveStateToFirestore();
             showToast("Profil berhasil disimpan!");
         }
 
@@ -1068,12 +1165,13 @@
             document.getElementById('editContactLocation').value = appState.profile.contactLocation;
         }
 
-        function saveContactSection(e) {
+        async function saveContactSection(e) {
             e.preventDefault();
             appState.profile.email = document.getElementById('editContactEmail').value;
             appState.profile.phone = document.getElementById('editContactPhone').value;
             appState.profile.contactLocation = document.getElementById('editContactLocation').value;
             renderPublicFrontend();
+            await saveStateToFirestore();
             showToast("Informasi kontak berhasil disimpan!");
         }
 
@@ -1125,31 +1223,37 @@
             renderAdminDashboard();
         }
 
-        function markMessageRead(id) {
+        async function markMessageRead(id) {
             const msg = appState.messages.find(m => m.id === id);
             if (msg) {
                 msg.read = true;
                 renderMessages();
+                updateUnreadBadge();
+                await saveStateToFirestore();
                 showToast("Pesan ditandai sebagai sudah dibaca.");
             }
         }
 
-        function markAllMessagesAsRead() {
+        async function markAllMessagesAsRead() {
             appState.messages.forEach(m => m.read = true);
             renderMessages();
+            updateUnreadBadge();
+            await saveStateToFirestore();
             showToast("Semua pesan ditandai sebagai sudah dibaca.");
         }
 
-        function deleteMessage(id) {
+        async function deleteMessage(id) {
             if (!confirm("Yakin ingin menghapus pesan ini?")) return;
             appState.messages = appState.messages.filter(m => m.id !== id);
             renderMessages();
+            updateUnreadBadge();
+            await saveStateToFirestore();
             showToast("Pesan berhasil dihapus.");
         }
 
-        function addMessage(name, email, subject, message) {
+        async function addMessage(name, email, subject, message) {
             appState.messages.unshift({
-                id: messageIdCounter++,
+                id: Date.now(),
                 name: name,
                 email: email,
                 subject: subject || 'Tanpa Subjek',
@@ -1159,6 +1263,7 @@
             });
             renderMessages();
             updateUnreadBadge();
+            await saveStateToFirestore();
         }
 
         /* ==========================================
@@ -1214,15 +1319,16 @@
 
         function editProject(id) { openProjectFormModal(id); }
 
-        function deleteProject(id) {
+        async function deleteProject(id) {
             if (!confirm("Yakin ingin menghapus project ini?")) return;
             appState.projects = appState.projects.filter(p => p.id !== id);
             renderAdminProjectsList();
             renderPublicFrontend();
+            await saveStateToFirestore();
             showToast("Project berhasil dihapus!");
         }
 
-        function handleProjectSave(e) {
+        async function handleProjectSave(e) {
             e.preventDefault();
             const editId = document.getElementById('projectEditId').value;
             const newProj = {
@@ -1246,11 +1352,13 @@
             closeProjectFormModal();
             renderAdminProjectsList();
             renderPublicFrontend();
+            await saveStateToFirestore();
             showToast("Project berhasil disimpan!");
         }
 
-        function saveAllProjects() {
+        async function saveAllProjects() {
             renderPublicFrontend();
+            await saveStateToFirestore();
             showToast("Semua perubahan project berhasil disimpan!");
         }
 
@@ -1263,7 +1371,7 @@
             document.getElementById('editAdminPasswordConfirm').value = "";
         }
 
-        function saveSecurityCredentials(e) {
+        async function saveSecurityCredentials(e) {
             e.preventDefault();
             const u = document.getElementById('editAdminUsername').value;
             const p1 = document.getElementById('editAdminPassword').value;
@@ -1271,6 +1379,7 @@
             if (p1 !== p2) { showToast("Password tidak cocok!", true); return; }
             appState.auth.username = u;
             if (p1) appState.auth.password = p1;
+            await saveStateToFirestore();
             showToast("Kredensial diperbarui!");
             populateSecurityForm();
         }
@@ -1361,27 +1470,36 @@
         /* ==========================================
            THEME
            ========================================== */
-        function initTheme() {
-            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia(
-                    '(prefers-color-scheme: dark)').matches)) {
+        function applyTheme(t) {
+            if (t === 'dark') {
                 document.documentElement.classList.add('dark');
-                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-lg';
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fa-solid fa-sun text-amber-400 text-lg';
             } else {
                 document.documentElement.classList.remove('dark');
-                document.getElementById('themeIcon').className = 'fa-solid fa-moon text-lg';
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fa-solid fa-moon text-lg';
             }
         }
 
-        function toggleTheme() {
-            if (document.documentElement.classList.contains('dark')) {
-                document.documentElement.classList.remove('dark');
-                localStorage.theme = 'light';
-                document.getElementById('themeIcon').className = 'fa-solid fa-moon text-lg';
+        function initTheme() {
+            if (appState.theme) {
+                applyTheme(appState.theme);
+            } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                applyTheme('dark');
             } else {
-                document.documentElement.classList.add('dark');
-                localStorage.theme = 'dark';
-                document.getElementById('themeIcon').className = 'fa-solid fa-sun text-amber-400 text-lg';
+                applyTheme('light');
             }
+        }
+
+        async function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                appState.theme = 'light';
+            } else {
+                appState.theme = 'dark';
+            }
+            applyTheme(appState.theme);
+            await saveStateToFirestore();
         }
 
         /* ==========================================
@@ -1407,7 +1525,7 @@
         /* ==========================================
            CONTACT FORM - SAVE MESSAGE
            ========================================== */
-        function handleFormSubmit(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('formName').value.trim();
             const email = document.getElementById('formEmail').value.trim();
@@ -1419,32 +1537,35 @@
                 return;
             }
 
-            addMessage(name, email, subject, message);
-
             const btn = document.getElementById('submitBtn');
             const originalHTML = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = `<i class="fa-solid fa-circle-notch animate-spin text-sm"></i> <span>Mengirim...</span>`;
-            setTimeout(() => {
+            
+            try {
+                await addMessage(name, email, subject, message);
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                    document.getElementById('contactForm').reset();
+                    showToast("Terima kasih! Pesan Anda telah terkirim.");
+                }, 800);
+            } catch (err) {
                 btn.disabled = false;
                 btn.innerHTML = originalHTML;
-                document.getElementById('contactForm').reset();
-                showToast("Terima kasih! Pesan Anda telah terkirim.");
-            }, 1200);
+                showToast("Gagal mengirim pesan.", true);
+            }
         }
 
         /* ==========================================
-           INIT
+           INIT & GLOBAL WINDOW EXPORTS
            ========================================== */
-        window.onload = function() {
+        function initApp() {
             initTheme();
             renderPublicFrontend();
             setupSmoothScroll();
             renderAdminLockButton();
             updateFooterAdminButton();
-
-            // Sample message
-            addMessage("John Doe", "john@example.com", "Konsultasi Project", "Halo, saya tertarik untuk berdiskusi tentang pengembangan aplikasi web untuk startup saya. Bisa kita jadwalkan meeting?");
 
             if (window.location.hash) {
                 const target = document.querySelector(window.location.hash);
@@ -1456,7 +1577,65 @@
                     }, 300);
                 }
             }
-        };
+        }
+
+        // Bind all functions to window for HTML inline event handlers
+        Object.assign(window, {
+            appState,
+            toggleTheme,
+            initTheme,
+            applyTheme,
+            toggleMobileMenu,
+            closeMobileMenu,
+            setupSmoothScroll,
+            renderPublicFrontend,
+            renderAdminLockButton,
+            updateFooterAdminButton,
+            handleFooterAdminClick,
+            openAdminPanelDirect,
+            clearLoginFields,
+            openLoginModal,
+            closeLoginModal,
+            handleLoginSubmit,
+            showAdminPanel,
+            closeAdminPanel,
+            adminLogout,
+            switchAdminTab,
+            renderAdminDashboard,
+            populateHeroForm,
+            saveHeroSection,
+            populateContactForm,
+            saveContactSection,
+            renderMessages,
+            updateUnreadBadge,
+            markMessageRead,
+            markAllMessagesAsRead,
+            deleteMessage,
+            addMessage,
+            renderAdminProjectsList,
+            openProjectFormModal,
+            closeProjectFormModal,
+            editProject,
+            deleteProject,
+            handleProjectSave,
+            saveAllProjects,
+            populateSecurityForm,
+            saveSecurityCredentials,
+            openModal,
+            closeModal,
+            renderProjects,
+            searchProjects,
+            showToast,
+            handleFormSubmit,
+            toggleAdminSidebar,
+            closeAdminSidebar,
+            saveStateToFirestore
+        });
+
+        window.onload = initApp;
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            initApp();
+        }
     </script>
 </body>
 </html>
